@@ -3,7 +3,7 @@
 Accessible, real-time navigation for everyone: wheelchair users, pedestrians, cyclists, drivers, transit riders and emergency responders.
 
 **Live demo:** https://codeworm786.github.io/accessroute-live/
-**Team:** (your team name and members)
+
 
 ## What it does
 - 6 travel modes, each with its own time and distance on real streets
