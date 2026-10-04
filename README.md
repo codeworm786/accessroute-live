@@ -23,8 +23,6 @@ Accessible, real-time navigation for everyone: wheelchair users, pedestrians, cy
 | Place search | Nominatim (OpenStreetMap) |
 | Potholes, barricades, rallies, broken lifts | Community reports |
 
-## How to run locally
-`node server.js`, then open http://localhost:3000 (internet required)
 
 ## Known limits
 - Transit and Emergency times are estimates (no free live transit feed)
