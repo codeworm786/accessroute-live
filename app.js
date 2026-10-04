@@ -8,12 +8,11 @@
 
   // ==================== STATE MANAGEMENT ====================
   const state = {
-    currentCity: 'delhi',
     activeMode: 'wheelchair', // wheelchair, walking, bicycle, transit, driving, emergency
     startCoords: null,
     destCoords: null,
-    startName: 'Central Metro Station Gate 2',
-    destName: 'City General Hospital & Medical Center',
+    startName: '',
+    destName: '',
     isSimulatingLive: true,
     isHighContrast: false,
     isVoiceEnabled: true,
@@ -31,148 +30,6 @@
     }
   };
 
-  // City Presets with rich accessibility and road network data
-  const CITY_PRESETS = {
-    delhi: {
-      name: 'New Delhi (Connaught Place)',
-      center: [28.6328, 77.2197],
-      zoom: 15,
-      start: { lat: 28.6325, lng: 28.6325 ? 77.2185 : 77.2185, name: 'Rajiv Chowk Metro Gate 2 (Ramp Access)' },
-      dest: { lat: 28.6385, lng: 77.2245, name: 'Connaught Medical Center & Polyclinic' },
-      ramps: [
-        { lat: 28.6329, lng: 77.2188, name: 'Gate 2 ADA Ramp', type: 'ramp', slope: '3.1%', status: 'Clear & Verified', icon: 'fa-road' },
-        { lat: 28.6342, lng: 77.2201, name: 'Inner Circle Crosswalk Ramp', type: 'ramp', slope: '4.0%', status: 'Gentle Slope', icon: 'fa-road' },
-        { lat: 28.6360, lng: 77.2215, name: 'Radial 3 Pedestrian Ramp', type: 'ramp', slope: '3.5%', status: 'Tactile Paved', icon: 'fa-road' },
-        { lat: 28.6375, lng: 77.2238, name: 'Hospital Entrance Incline Ramp', type: 'ramp', slope: '2.8%', status: 'Dual Handrails', icon: 'fa-road' }
-      ],
-      elevators: [
-        { lat: 28.6327, lng: 77.2192, name: 'Metro Concourse Lift A', type: 'elevator', status: 'Operational', capacity: '12 Person / Stretcher', icon: 'fa-elevator' },
-        { lat: 28.6355, lng: 77.2210, name: 'Underpass Accessible Lift B', type: 'elevator', status: 'Operational', capacity: 'Wheelchair Accessible', icon: 'fa-elevator' },
-        { lat: 28.6331, lng: 77.2205, name: 'Metro Gate 5 Escalator', type: 'escalator', status: 'Running Upward (Ramp 10m away)', note: 'Wheelchair alternative: Lift A', icon: 'fa-stairs' }
-      ],
-      rallies: [
-        {
-          id: 'rally-delhi-1',
-          name: 'Civic Teachers & Public Rally',
-          lat: 28.6348,
-          lng: 77.2230,
-          radius: 140,
-          crowd: '~2,200 Participants',
-          severity: 'Road Blocked by Police Cordon',
-          trafficDelay: 15,
-          active: true
-        }
-      ],
-      hazards: [
-        {
-          id: 'hz-1',
-          type: 'pothole',
-          lat: 28.6338,
-          lng: 77.2195,
-          desc: 'Deep 15cm pothole on edge of curb cut, severe wheelchair tilt hazard.',
-          severity: 'high',
-          verifiedCount: 7,
-          timestamp: '8 mins ago'
-        },
-        {
-          id: 'hz-2',
-          type: 'barricade',
-          lat: 28.6350,
-          lng: 77.2225,
-          desc: 'Iron barricades placed for pedestrian redirection, steps only.',
-          severity: 'high',
-          verifiedCount: 14,
-          timestamp: '25 mins ago'
-        }
-      ]
-    },
-    sf: {
-      name: 'San Francisco (Market St & Union Sq)',
-      center: [37.7879, -122.4075],
-      zoom: 15,
-      start: { lat: 37.7858, lng: -122.4065, name: 'Powell St BART Station (Street Lift)' },
-      dest: { lat: 37.7905, lng: -122.4035, name: 'Sutter Health Urgent Care' },
-      ramps: [
-        { lat: 37.7862, lng: -122.4062, name: 'Market St Curb Cut & Ramp', type: 'ramp', slope: '3.2%', status: 'Compliant', icon: 'fa-road' },
-        { lat: 37.7885, lng: -122.4050, name: 'Union Sq Plaza Gentle Ramp', type: 'ramp', slope: '2.5%', status: 'Wide Accessible', icon: 'fa-road' },
-        { lat: 37.7898, lng: -122.4042, name: 'Post St Accessible Crossing', type: 'ramp', slope: '3.8%', status: 'Tactile Indicator', icon: 'fa-road' }
-      ],
-      elevators: [
-        { lat: 37.7857, lng: -122.4068, name: 'Powell BART Street-to-Platform Elevator', type: 'elevator', status: 'Operational', capacity: 'Wheelchair / Bike', icon: 'fa-elevator' },
-        { lat: 37.7882, lng: -122.4055, name: 'Union Sq Garage Public Elevator', type: 'elevator', status: 'Operational', capacity: 'ADA Certified', icon: 'fa-elevator' },
-        { lat: 37.7865, lng: -122.4060, name: 'Cable Car Turnaround Escalator', type: 'escalator', status: 'Under Inspection (Ramp adjacent)', icon: 'fa-stairs' }
-      ],
-      rallies: [
-        {
-          id: 'rally-sf-1',
-          name: 'Tech Worker & Climate Rally',
-          lat: 37.7875,
-          lng: -122.4052,
-          radius: 120,
-          crowd: '~1,500 Participants',
-          severity: 'Powell / Geary St Infiltration',
-          trafficDelay: 12,
-          active: true
-        }
-      ],
-      hazards: [
-        {
-          id: 'hz-sf-1',
-          type: 'broken_ramp',
-          lat: 37.7868,
-          lng: -122.4058,
-          desc: 'Construction scaffold blocking curb ramp. 10cm step without transition.',
-          severity: 'high',
-          verifiedCount: 9,
-          timestamp: '15 mins ago'
-        }
-      ]
-    },
-    london: {
-      name: 'London (Westminster & Whitehall)',
-      center: [51.5014, -0.1265],
-      zoom: 15,
-      start: { lat: 51.5010, lng: -0.1250, name: 'Westminster Underground Station (Step-Free)' },
-      dest: { lat: 51.5065, lng: -0.1280, name: 'Trafalgar Medical Center' },
-      ramps: [
-        { lat: 51.5015, lng: -0.1255, name: 'Parliament Square Accessible Ramp', type: 'ramp', slope: '3.0%', status: 'Step-Free Pavement', icon: 'fa-road' },
-        { lat: 51.5035, lng: -0.1265, name: 'Whitehall Northbound Ramp', type: 'ramp', slope: '2.9%', status: 'Smooth Asphalting', icon: 'fa-road' },
-        { lat: 51.5055, lng: -0.1275, name: 'Trafalgar Square South Terrace Ramp', type: 'ramp', slope: '4.2%', status: 'Handrailed Ramp', icon: 'fa-road' }
-      ],
-      elevators: [
-        { lat: 51.5012, lng: -0.1248, name: 'Westminster Station Jubilee Line Lift', type: 'elevator', status: 'Operational', capacity: 'Step-Free to Train', icon: 'fa-elevator' },
-        { lat: 51.5040, lng: -0.1270, name: 'MOD Pedestrian Underpass Lift', type: 'elevator', status: 'Operational', capacity: 'Clean & Safe', icon: 'fa-elevator' },
-        { lat: 51.5020, lng: -0.1258, name: 'Bridge St Escalators', type: 'escalator', status: 'Running (Wheelchairs use Station Lift 1)', icon: 'fa-stairs' }
-      ],
-      rallies: [
-        {
-          id: 'rally-lon-1',
-          name: 'Parliament Green March & Gathering',
-          lat: 51.5028,
-          lng: -0.1260,
-          radius: 130,
-          crowd: '~3,000 Marchers',
-          severity: 'Whitehall Traffic Diversion in effect',
-          trafficDelay: 18,
-          active: true
-        }
-      ],
-      hazards: [
-        {
-          id: 'hz-lon-1',
-          type: 'pothole',
-          lat: 51.5030,
-          lng: -0.1268,
-          desc: 'Broken cobblestone paver, creates wheelchair wheel wedge risk.',
-          severity: 'medium',
-          verifiedCount: 5,
-          timestamp: '20 mins ago'
-        }
-      ]
-    }
-  };
-
-  // 6 MODES CONFIGURATION
   const MODES_CONFIG = {
     wheelchair: {
       name: 'Wheelchair / Accessible',
@@ -244,7 +101,6 @@
 
   // DOM Elements cache
   const el = {
-    citySelect: document.getElementById('citySelect'),
     tileStyleSelect: document.getElementById('tileStyleSelect'),
     startInput: document.getElementById('startInput'),
     destInput: document.getElementById('destInput'),
@@ -307,11 +163,34 @@
     initMap();
     loadSavedHazards();
     setupEventListeners();
-    setCity('delhi');
+    showWelcome();
+    locateStart(true);
     setupSearch();
     addKeyButton();
     startLiveFeedSimulation();
     showToast('🚀 System Online: Live Multi-Modal & Ramp Engine active!', 'info');
+  }
+
+  function showWelcome() {
+    const w = document.createElement('div'); w.id = 'arWelcome';
+    w.style.cssText = 'position:fixed;top:84px;left:50%;transform:translateX(-50%);z-index:15;width:calc(100vw - 16px);max-width:420px;padding:14px 16px;border-radius:16px;background:rgba(15,23,42,.94);border:1px solid #334155;color:#e2e8f0;font-size:13px;line-height:1.45;box-shadow:0 10px 30px rgba(0,0,0,.4)';
+    w.innerHTML = '<b style="font-size:15px">👋 Where do you want to go?</b><br>Allow your location to use it as the start, then enter a destination. Or type both places, or click the map.<div style="margin-top:8px"><button id="arUseLoc" style="padding:6px 12px;border-radius:10px;background:#2563eb;color:#fff;border:0;font-weight:700;cursor:pointer">📍 Use my location</button></div>';
+    document.body.appendChild(w);
+    document.getElementById('arUseLoc').onclick = () => locateStart(false);
+  }
+
+  function locateStart(auto) {
+    if (!('geolocation' in navigator)) { showToast('Type your start and destination, or click the map.', 'info'); return; }
+    navigator.geolocation.getCurrentPosition(pos => {
+      if (auto && state.startCoords) return;
+      const c = [pos.coords.latitude, pos.coords.longitude];
+      state.startCoords = c; state.startName = 'My current location'; el.startInput.value = state.startName;
+      map.flyTo(c, 15, { duration: 1.2 }); drawPins();
+      showToast('📍 Start set to your location. Now enter your destination.', 'success');
+      if (window.innerWidth >= 768) el.destInput.focus();
+      calculateAndRenderRoute();
+    }, () => showToast(auto ? 'Type your start and destination, or click the map.' : 'Location is blocked. Type your start, or click the map.', auto ? 'info' : 'warning'),
+    { timeout: 12000, maximumAge: 60000 });
   }
 
   // Initialize Map
@@ -338,8 +217,8 @@
     currentTileLayer = tileLayers.dark;
 
     map = L.map('map', {
-      center: CITY_PRESETS.delhi.center,
-      zoom: CITY_PRESETS.delhi.zoom,
+      center: [20, 20],
+      zoom: 2,
       layers: [currentTileLayer],
       zoomControl: false
     });
@@ -536,7 +415,7 @@
   function startTurnByTurnNavigation() {
     if (!state.activeRouteData || state.isNavigating) return;
     const R = state.activeRouteData, mc = MODES_CONFIG[state.activeMode];
-    state.isNavigating = true; state.navStepIndex = 1; navAnnounced = {};
+    state.isNavigating = true; state.navStepIndex = 1; navAnnounced = {}; document.body.classList.add('navigating');
     el.activeNavBanner.classList.remove('hidden');
     el.startNavigationBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> In Trip...`;
     if (navAvatarMarker) map.removeLayer(navAvatarMarker);
@@ -558,7 +437,7 @@
   }
 
   function stopTurnByTurnNavigation() {
-    state.isNavigating = false;
+    state.isNavigating = false; document.body.classList.remove('navigating');
     clearInterval(state.navInterval);
     if (navWatchId != null && navigator.geolocation) { navigator.geolocation.clearWatch(navWatchId); navWatchId = null; }
     el.activeNavBanner.classList.add('hidden');
@@ -744,14 +623,15 @@
     const lat = idx.map(i => line[i][0].toFixed(5)).join(','), lng = idx.map(i => line[i][1].toFixed(5)).join(',');
     return memo('e' + lat + lng, async () => {
       const z = (await getJ(`https://api.open-meteo.com/v1/elevation?latitude=${lat}&longitude=${lng}`)).elevation;
-      let sum = 0, len = 0, max = 0;
+      let sum = 0, len = 0, max = 0, cum = 0; const prof = [{ d: 0, z: z[0] }];
       for (let i = 1; i < n; i++) {
         const dm = getDistanceKm(line[idx[i - 1]][0], line[idx[i - 1]][1], line[idx[i]][0], line[idx[i]][1]) * 1000;
+        cum += dm; prof.push({ d: cum, z: z[i] });
         if (dm < 20) continue;
         const g = Math.abs(z[i] - z[i - 1]) / dm * 100;
         sum += g * dm; len += dm; if (dm >= 80) max = Math.max(max, g);
       }
-      return { avg: len ? sum / len : 0, max };
+      return { avg: len ? sum / len : 0, max, prof };
     }, 3600000).catch(() => null);
   }
 
@@ -831,8 +711,8 @@
   // ---- rendering ----
   function drawPins() {
     markersLayer.clearLayers();
-    markersLayer.addLayer(L.marker(state.startCoords, { icon: createSvgIcon('fa-location-dot', '#10b981', 'Start') }).bindPopup(`<b>Starting Point</b><br>${esc(state.startName)}`));
-    markersLayer.addLayer(L.marker(state.destCoords, { icon: createSvgIcon('fa-flag-checkered', '#ef4444', 'Destination') }).bindPopup(`<b>Destination</b><br>${esc(state.destName)}`));
+    if (state.startCoords) markersLayer.addLayer(L.marker(state.startCoords, { icon: createSvgIcon('fa-location-dot', '#10b981', 'Start') }).bindPopup(`<b>Starting Point</b><br>${esc(state.startName)}`));
+    if (state.destCoords) markersLayer.addLayer(L.marker(state.destCoords, { icon: createSvgIcon('fa-flag-checkered', '#ef4444', 'Destination') }).bindPopup(`<b>Destination</b><br>${esc(state.destName)}`));
   }
 
   function drawRoute(route) {
@@ -872,22 +752,33 @@
   }
 
   async function calculateAndRenderRoute() {
-    if (!state.startCoords || !state.destCoords) return;
+    if (!state.startCoords || !state.destCoords) { drawPins(); return; }
+    const w0 = document.getElementById('arWelcome'); if (w0) w0.remove();
     const seq = ++routeSeq;
     drawPins();
     setStatus('⏳ Fetching live route, map data and traffic…');
+    el.etaValue.textContent = '…';
     let route;
     try { route = await computeRoute(state.activeMode, state.startCoords, state.destCoords); }
-    catch (e) { console.warn(e); setStatus('⚠️ Routing service unreachable or no route between these points'); showToast('⚠️ No route found (or routing service busy). Try again.', 'warning'); return; }
+    catch (e) { console.warn(e); setStatus('⚠️ Routing service unreachable or no route between these points'); el.etaValue.textContent = '—'; el.distValue.textContent = ''; el.trafficBadge.className = 'nav-badge bg-red-500/20 text-red-300 border border-red-500/30'; el.trafficBadge.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i> Route unavailable'; el.routeSafetyBadge.innerHTML = 'Try again'; el.liveAlertBanner.classList.add('hidden'); showToast('⚠️ No route found (or routing service busy). Try again.', 'warning'); return; }
     if (seq !== routeSeq) return;
     state.activeRouteData = route;
     ttIncidents = route.allInc || [];
     drawRoute(route);
     updateRouteHUD(route);
     renderCityOverlays(route);
-    if (!state.isNavigating) map.fitBounds(L.latLngBounds(route.points), { padding: [80, 80], maxZoom: 17 });
+    if (!state.isNavigating) { const sm = window.innerWidth < 768 && !document.body.classList.contains('sheet-closed'); map.fitBounds(L.latLngBounds(route.points), sm ? { paddingTopLeft: [20, 90], paddingBottomRight: [20, Math.round(window.innerHeight * 0.46)], maxZoom: 17 } : { padding: [80, 80], maxZoom: 17 }); }
     const t = new Date().toLocaleTimeString();
     setStatus(`✅ Live ${t} · OSRM route · ${route.feats.length} accessibility features (OpenStreetMap) · traffic: ${TT_KEY() ? 'TomTom live' : 'off (add key)'} · ${HAZARDS.length} community report(s)`);
+  }
+
+  function renderSlopeProfile(ev) {
+    const box = document.getElementById('slopeProfile'); if (!box) return;
+    if (!ev || !ev.prof || ev.prof.length < 2) { box.classList.add('hidden'); return; }
+    const p = ev.prof, zs = p.map(x => x.z), lo = Math.min(...zs), hi = Math.max(...zs), span = Math.max(5, hi - lo), D = p[p.length - 1].d || 1;
+    const pts = p.map(x => `${(x.d / D * 200).toFixed(1)},${(26 - (x.z - lo) / span * 22).toFixed(1)}`).join(' ');
+    box.classList.remove('hidden');
+    box.innerHTML = `<div class="flex justify-between text-[10px] text-slate-400 mb-1"><span>Elevation along route (Open-Meteo)</span><span class="text-emerald-400 font-semibold">${lo.toFixed(0)}–${hi.toFixed(0)} m</span></div><svg class="w-full h-8" viewBox="0 0 200 30" preserveAspectRatio="none"><polyline points="${pts}" fill="none" stroke="#10b981" stroke-width="2"/></svg><div class="flex justify-between text-[9px] text-slate-500 mt-1"><span>Start</span><span>${fmtDist(D)}</span></div>`;
   }
 
   function updateRouteHUD(route) {
@@ -911,10 +802,12 @@
       el.rampsCountText.textContent = na ? 'Data unavailable' : `${c.ramp} ramps / dropped kerbs`;
       el.elevatorsCountText.textContent = na ? 'Data unavailable' : `${c.elev} lift(s) mapped`;
       el.escalatorsCountText.textContent = na ? 'Data unavailable' : (c.esc ? `${c.esc} on path — use a lift` : 'None on path');
+      renderSlopeProfile(route.elevation);
       el.slopeGradeText.textContent = route.elevation ? `Avg ${route.elevation.avg.toFixed(1)}% · max ${route.elevation.max.toFixed(1)}%` : 'Terrain data unavailable';
       el.routeSafetyBadge.innerHTML = na ? '<i class="fa-solid fa-circle-question"></i> Unknown' : c.stairs ? `<i class="fa-solid fa-triangle-exclamation"></i> ${c.stairs} stairs on path` : (c.ramp + c.elev) ? '<i class="fa-solid fa-shield-check"></i> Step-free (mapped)' : '<i class="fa-solid fa-circle-question"></i> No stairs mapped';
     } else {
       el.accessibilityDetailsBox.classList.add('hidden');
+      renderSlopeProfile(null);
       el.routeSafetyBadge.innerHTML = route.altCount > 1 ? `<i class="fa-solid fa-check"></i> Best of ${route.altCount} routes` : '<i class="fa-solid fa-check"></i> Fastest route';
     }
 
@@ -935,16 +828,6 @@
     renderStepsList(route.steps);
   }
 
-  function setCity(cityKey) {
-    if (!CITY_PRESETS[cityKey]) return;
-    state.currentCity = cityKey;
-    const city = CITY_PRESETS[cityKey];
-    map.flyTo(city.center, city.zoom, { duration: 1.2 });
-    state.startCoords = [city.start.lat, city.start.lng]; state.destCoords = [city.dest.lat, city.dest.lng];
-    state.startName = city.start.name; state.destName = city.dest.name;
-    el.startInput.value = state.startName; el.destInput.value = state.destName;
-    calculateAndRenderRoute();
-  }
 
   function submitHazardReport() {
     const desc = el.reportDescText.value.trim() || 'Reported by a community member.';
@@ -1016,7 +899,7 @@
         if (!r[0]) { showToast('Place not found', 'warning'); return; }
         const c = [+r[0].lat, +r[0].lon], name = r[0].display_name.split(',').slice(0, 2).join(',');
         if (k === 'start') { state.startCoords = c; state.startName = name; } else { state.destCoords = c; state.destName = name; }
-        inp.value = name; calculateAndRenderRoute();
+        inp.value = name; if (!state.startCoords || !state.destCoords) map.flyTo(c, 15); calculateAndRenderRoute();
       } catch (err) { showToast('Search failed. Try again.', 'warning'); }
     }));
   }
@@ -1025,7 +908,7 @@
     const b = document.createElement('button');
     const label = () => TT_KEY() ? '🚦 Traffic key ✓' : '🚦 Add traffic key';
     b.textContent = label();
-    b.style.cssText = 'position:fixed;right:12px;bottom:130px;z-index:9999;padding:6px 10px;border-radius:10px;background:#1e293b;color:#e2e8f0;border:1px solid #475569;font-size:11px;cursor:pointer';
+    b.className = 'ar-fab'; b.id = 'arKeyBtn';
     b.onclick = () => {
       const k = prompt('Paste your free TomTom API key (developer.tomtom.com). Leave empty to remove it.', TT_KEY());
       if (k === null) return;
@@ -1034,23 +917,19 @@
     document.body.appendChild(b);
     const d = document.createElement('button');
     d.textContent = '🎬 Demo walk: OFF';
-    d.style.cssText = b.style.cssText.replace('bottom:130px', 'bottom:165px');
+    d.className = 'ar-fab'; d.id = 'arDemoBtn';
     d.onclick = () => { demoMode = !demoMode; d.textContent = '🎬 Demo walk: ' + (demoMode ? 'ON' : 'OFF'); if (state.isNavigating) stopTurnByTurnNavigation(); };
     document.body.appendChild(d);
+    const sh = document.createElement('button'); sh.id = 'arSheetBtn'; sh.className = 'ar-fab ar-mobile-only'; sh.textContent = '⬇ Hide panel';
+    sh.onclick = () => { const c = document.body.classList.toggle('sheet-closed'); sh.textContent = c ? '⬆ Show panel' : '⬇ Hide panel'; setTimeout(() => map.invalidateSize(), 200); };
+    const ly = document.createElement('button'); ly.id = 'arLayersBtn'; ly.className = 'ar-fab ar-mobile-only'; ly.textContent = '🗂 Layers';
+    ly.onclick = () => document.body.classList.toggle('layers-open');
+    document.body.appendChild(sh); document.body.appendChild(ly);
   }
 
   // ==================== EVENT LISTENERS & UI HELPERS ====================
 
   function setupEventListeners() {
-    // City Selector
-    el.citySelect.addEventListener('change', (e) => {
-      if (e.target.value !== 'custom') {
-        setCity(e.target.value);
-      } else {
-        showToast('📍 Custom Mode: Click anywhere on map to set Start and Destination!', 'info');
-      }
-    });
-
     // Basemap Style Switcher
     el.tileStyleSelect.addEventListener('change', (e) => {
       const style = e.target.value;
@@ -1248,19 +1127,12 @@
       return;
     }
 
-    // If destination not set or Alt key pressed, set destination
-    if (e.originalEvent.altKey || !state.destCoords) {
-      state.destCoords = [lat, lng];
-      state.destName = `Pinned Point (${lat.toFixed(4)}, ${lng.toFixed(4)})`;
-      el.destInput.value = state.destName;
-      showToast('📍 Destination pinned on map!', 'info');
-    } else {
-      // Set Start or ask
-      state.startCoords = [lat, lng];
-      state.startName = `Pinned Point (${lat.toFixed(4)}, ${lng.toFixed(4)})`;
-      el.startInput.value = state.startName;
-      showToast('🟢 Starting location updated!', 'info');
-    }
+    const setStart = () => { state.startCoords = [lat, lng]; state.startName = `Pinned point (${lat.toFixed(4)}, ${lng.toFixed(4)})`; el.startInput.value = state.startName; };
+    const setDest = () => { state.destCoords = [lat, lng]; state.destName = `Pinned point (${lat.toFixed(4)}, ${lng.toFixed(4)})`; el.destInput.value = state.destName; };
+    if (!state.startCoords) { setStart(); showToast('🟢 Start set. Now click or type your destination.', 'info'); }
+    else if (!state.destCoords) { setDest(); showToast('🏁 Destination set.', 'info'); }
+    else if (e.originalEvent.altKey || e.originalEvent.shiftKey) { setStart(); showToast('🟢 Start moved.', 'info'); }
+    else { setDest(); showToast('🏁 Destination moved. (Shift+click moves the start.)', 'info'); }
 
     calculateAndRenderRoute();
   }
