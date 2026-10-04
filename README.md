@@ -12,8 +12,4 @@ Run:  node server.js   then open http://localhost:3000   (internet required)
 | Place search | Nominatim (OpenStreetMap): type a place in Start/Destination and press Enter |
 | Potholes, barricades, rallies, broken lifts | Community reports (stored in this browser; add a backend to share across users) |
 
-## Known limits (be honest with judges)
-- Transit and Emergency times are estimates (no free live transit feed).
-- Lift/escalator *operational status* is not available from any open source.
-- Reports are per-browser until a shared database is added.
-- Public OSRM/Overpass servers are for demos, not heavy traffic.
+
