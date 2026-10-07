@@ -1,10 +1,10 @@
-// Lightweight zero-dependency HTTP server for AccessRoute Live
+// Production Server for AccessRoute Live (Serving built React + Leaflet + Lucide App)
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
 
 const PORT = process.env.PORT || 3000;
-const PUBLIC_DIR = __dirname;
+const DIST_DIR = path.join(__dirname, 'frontend', 'dist');
 
 const MIME_TYPES = {
     '.html': 'text/html; charset=utf-8',
@@ -23,13 +23,12 @@ const server = http.createServer((req, res) => {
     if (reqUrl === '/') reqUrl = '/index.html';
 
     const safePath = path.normalize(reqUrl).replace(/^(\.\.[\/\\])+/, '');
-    const filePath = path.join(PUBLIC_DIR, safePath);
+    let filePath = path.join(DIST_DIR, safePath);
 
     fs.stat(filePath, (err, stats) => {
         if (err || !stats.isFile()) {
-            res.writeHead(404, { 'Content-Type': 'text/plain' });
-            res.end('404 Not Found');
-            return;
+            // SPA fallback to index.html in dist
+            filePath = path.join(DIST_DIR, 'index.html');
         }
 
         const ext = path.extname(filePath).toLowerCase();
@@ -37,7 +36,8 @@ const server = http.createServer((req, res) => {
 
         res.writeHead(200, {
             'Content-Type': contentType,
-            'Cache-Control': 'no-cache, no-store, must-revalidate'
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Access-Control-Allow-Origin': '*'
         });
 
         const stream = fs.createReadStream(filePath);
@@ -45,6 +45,6 @@ const server = http.createServer((req, res) => {
     });
 });
 
-server.listen(PORT, '127.0.0.1', () => {
-    console.log(`AccessRoute Live server running at: http://localhost:${PORT}`);
+server.listen(PORT, '0.0.0.0', () => {
+    console.log(`AccessRoute Live server running at: http://localhost:${PORT} (Serving built React+Leaflet App from ${DIST_DIR})`);
 });

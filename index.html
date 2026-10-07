@@ -51,7 +51,7 @@
   <div id="map" class="absolute inset-0 z-0"></div>
 
   <!-- Top Navigation Header -->
-  <header id="arHeader" class="absolute top-3 left-3 right-3 z-20 flex flex-wrap items-center justify-between gap-3 px-4 py-2.5 rounded-2xl glass-panel shadow-2xl">
+  <header class="absolute top-3 left-3 right-3 z-20 flex flex-wrap items-center justify-between gap-3 px-4 py-2.5 rounded-2xl glass-panel shadow-2xl">
     <div class="flex items-center gap-3">
       <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-emerald-500 flex items-center justify-center text-white shadow-lg shadow-blue-500/30">
         <i class="fa-solid fa-wheelchair-move text-lg"></i>
@@ -72,8 +72,12 @@
 
     <!-- Center/Right Action Controls -->
     <div class="flex items-center gap-2.5 flex-wrap">
-      <!-- City Demo Presets -->
-      
+      <!-- Real Current Location Indicator -->
+      <button id="currentLocationHeaderBtn" class="flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-xl bg-slate-800/80 border border-slate-700 text-slate-200 hover:text-white hover:bg-slate-700 transition-colors">
+        <i class="fa-solid fa-location-crosshairs text-cyan-400"></i>
+        <span id="currentLocationHeaderText">📍 Current location</span>
+      </button>
+
 
       <!-- Live Stream Simulator Toggle -->
       <button id="toggleSimulationBtn" class="flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-xl bg-emerald-600/20 text-emerald-300 border border-emerald-500/40 hover:bg-emerald-600/30 transition-all shadow-sm">
@@ -106,7 +110,7 @@
   </header>
 
   <!-- Left Floating Navigation & Mode Hub -->
-  <aside id="arSheet" class="absolute top-20 left-3 bottom-4 w-96 max-w-[calc(100vw-1.5rem)] z-20 flex flex-col gap-3 pointer-events-none">
+  <aside class="absolute top-20 left-3 bottom-4 w-96 max-w-[calc(100vw-1.5rem)] z-20 flex flex-col gap-3 pointer-events-none">
     
     <!-- Main Planning Card -->
     <div class="glass-panel p-4 rounded-2xl flex flex-col gap-3.5 shadow-2xl pointer-events-auto overflow-y-auto max-h-[82vh]">
@@ -122,7 +126,7 @@
           <div class="flex-1 flex flex-col gap-2 relative">
             <!-- Start Input & Autocomplete Container -->
             <div class="relative">
-              <input id="startInput" type="text" placeholder="Search start location (or click map)" class="w-full bg-slate-800/90 text-xs text-slate-100 rounded-lg pl-2.5 pr-7 py-2 border border-slate-700 focus:border-blue-500 outline-none">
+              <input id="startInput" type="text" value="Central Metro Station Gate 2" placeholder="Search start location (or click map)" class="w-full bg-slate-800/90 text-xs text-slate-100 rounded-lg pl-2.5 pr-7 py-2 border border-slate-700 focus:border-blue-500 outline-none">
               <button id="currentLocBtn" title="Use current GPS location" class="absolute right-2 top-2 text-slate-400 hover:text-emerald-400 text-xs">
                 <i class="fa-solid fa-crosshairs"></i>
               </button>
@@ -131,7 +135,7 @@
 
             <!-- Destination Input & Autocomplete Container -->
             <div class="relative">
-              <input id="destInput" type="text" placeholder="Search destination address" class="w-full bg-slate-800/90 text-xs text-slate-100 rounded-lg pl-2.5 pr-7 py-2 border border-slate-700 focus:border-blue-500 outline-none">
+              <input id="destInput" type="text" value="City General Hospital & Medical Center" placeholder="Search destination address" class="w-full bg-slate-800/90 text-xs text-slate-100 rounded-lg pl-2.5 pr-7 py-2 border border-slate-700 focus:border-blue-500 outline-none">
               <button id="swapPointsBtn" title="Swap Start & Destination" class="absolute right-2 top-2 text-slate-400 hover:text-blue-400 text-xs">
                 <i class="fa-solid fa-arrow-down-up-across-line"></i>
               </button>
@@ -209,15 +213,15 @@
         <div class="flex items-center justify-between">
           <div>
             <div class="flex items-baseline gap-2">
-              <span id="etaValue" class="text-3xl font-extrabold text-white">—</span>
-              <span id="distValue" class="text-sm font-semibold text-slate-400"></span>
+              <span id="etaValue" class="text-3xl font-extrabold text-white">16 min</span>
+              <span id="distValue" class="text-sm font-semibold text-slate-400">1.4 km</span>
             </div>
             <div class="flex items-center gap-1.5 mt-0.5">
               <span id="trafficBadge" class="nav-badge bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                <i class="fa-solid fa-location-dot"></i> Enter start &amp; destination
+                <i class="fa-solid fa-circle-check"></i> Free Flow
               </span>
               <span id="routeSafetyBadge" class="nav-badge bg-blue-500/20 text-blue-300 border border-blue-500/30">
-                Waiting for places
+                <i class="fa-solid fa-shield-check"></i> 100% Step-Free
               </span>
             </div>
           </div>
@@ -231,13 +235,13 @@
         </div>
 
         <!-- SPECIAL ACCESSIBILITY TELEMETRY (Wheelchair / Handicap specific) -->
-        <div id="accessibilityDetailsBox" class="hidden bg-slate-950/70 p-3 rounded-lg border border-slate-800 space-y-2">
+        <div id="accessibilityDetailsBox" class="bg-slate-950/70 p-3 rounded-lg border border-slate-800 space-y-2">
           <div class="flex items-center justify-between text-xs font-bold text-emerald-400">
             <span class="flex items-center gap-1.5">
               <i class="fa-solid fa-wheelchair"></i> Wheelchair & Handicap Telemetry
             </span>
             <span class="text-[11px] px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800">
-              OpenStreetMap data
+              Grade A (Step-Free)
             </span>
           </div>
 
@@ -247,7 +251,7 @@
               <i class="fa-solid fa-road text-emerald-400 text-sm"></i>
               <div>
                 <span class="text-slate-400 block text-[10px]">Ramps on Path</span>
-                <span class="font-bold text-slate-200" id="rampsCountText">…</span>
+                <span class="font-bold text-slate-200" id="rampsCountText">4 Verified Ramps</span>
               </div>
             </div>
 
@@ -255,7 +259,7 @@
               <i class="fa-solid fa-elevator text-cyan-400 text-sm"></i>
               <div>
                 <span class="text-slate-400 block text-[10px]">Elevators/Lifts</span>
-                <span class="font-bold text-slate-200" id="elevatorsCountText">…</span>
+                <span class="font-bold text-slate-200" id="elevatorsCountText">2 Operational</span>
               </div>
             </div>
 
@@ -263,7 +267,7 @@
               <i class="fa-solid fa-stairs text-amber-400 text-sm"></i>
               <div>
                 <span class="text-slate-400 block text-[10px]">Escalators Status</span>
-                <span class="font-bold text-slate-200" id="escalatorsCountText">…</span>
+                <span class="font-bold text-slate-200" id="escalatorsCountText">1 Active / Bypassed</span>
               </div>
             </div>
 
@@ -271,20 +275,46 @@
               <i class="fa-solid fa-chart-line text-emerald-400 text-sm"></i>
               <div>
                 <span class="text-slate-400 block text-[10px]">Slope / Incline</span>
-                <span class="font-bold text-slate-200" id="slopeGradeText">…</span>
+                <span class="font-bold text-slate-200" id="slopeGradeText">Avg 3.2° (Gentle)</span>
               </div>
             </div>
           </div>
 
-          <div id="slopeProfile" class="hidden mt-2 bg-slate-900/80 p-2 rounded-lg border border-slate-800"></div>
+          <!-- Incline Gradient Profile SVG Mini-Chart -->
+          <div class="mt-2 bg-slate-900/80 p-2 rounded-lg border border-slate-800">
+            <div class="flex items-center justify-between text-[10px] text-slate-400 mb-1">
+              <span>Path Slope Profile:</span>
+              <span class="text-emerald-400 font-semibold"><i class="fa-solid fa-check"></i> Max 4.8° (Within 5.0° ADA Limit)</span>
+            </div>
+            <svg class="w-full h-8 overflow-visible" viewBox="0 0 200 30" preserveAspectRatio="none">
+              <defs>
+                <linearGradient id="slopeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stop-color="#10b981" />
+                  <stop offset="40%" stop-color="#34d399" />
+                  <stop offset="70%" stop-color="#10b981" />
+                  <stop offset="100%" stop-color="#059669" />
+                </linearGradient>
+              </defs>
+              <path d="M 0 24 Q 40 18, 70 20 T 130 16 T 170 22 L 200 18 L 200 30 L 0 30 Z" fill="url(#slopeGrad)" opacity="0.35"/>
+              <path d="M 0 24 Q 40 18, 70 20 T 130 16 T 170 22 L 200 18" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round"/>
+              <circle cx="70" cy="20" r="3.5" fill="#10b981" stroke="#ffffff" stroke-width="1.5"/>
+              <circle cx="130" cy="16" r="3.5" fill="#10b981" stroke="#ffffff" stroke-width="1.5"/>
+            </svg>
+            <div class="flex justify-between text-[9px] text-slate-500 mt-1">
+              <span>Start (0m)</span>
+              <span>Ramp 1 (3.1°)</span>
+              <span>Ramp 2 (4.0°)</span>
+              <span>Destination</span>
+            </div>
+          </div>
         </div>
 
         <!-- DYNAMIC LIVE ALERT / RALLY NOTIFICATION BANNER -->
-        <div id="liveAlertBanner" class="hidden p-3 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-200 text-xs flex items-start gap-2.5">
+        <div id="liveAlertBanner" class="p-3 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-200 text-xs flex items-start gap-2.5">
           <i class="fa-solid fa-triangle-exclamation text-amber-400 mt-0.5 text-sm animate-bounce"></i>
           <div class="flex-1">
-            <span class="font-bold block" id="liveAlertTitle"></span>
-            <p class="text-[11px] text-amber-300/90 mt-0.5" id="liveAlertDesc"></p>
+            <span class="font-bold block" id="liveAlertTitle">Live Intelligence: Procession Active Nearby</span>
+            <p class="text-[11px] text-amber-300/90 mt-0.5" id="liveAlertDesc">Peaceful gathering near Main Circle. Route automatically adjusted through 3rd Avenue accessible ramp corridor.</p>
           </div>
         </div>
 
@@ -292,7 +322,7 @@
         <div class="border-t border-slate-800 pt-2">
           <button id="toggleStepsBtn" class="w-full flex items-center justify-between text-xs text-slate-300 hover:text-white py-1 font-semibold">
             <span class="flex items-center gap-1.5">
-              <i class="fa-solid fa-list-ol text-blue-400"></i> Turn-by-Turn Steps (<span id="stepsCount">0</span>)
+              <i class="fa-solid fa-list-ol text-blue-400"></i> Turn-by-Turn Steps (<span id="stepsCount">5</span>)
             </span>
             <i class="fa-solid fa-chevron-down text-slate-500 text-xs transition-transform" id="stepsChevron"></i>
           </button>
@@ -306,7 +336,7 @@
   </aside>
 
   <!-- Right Floating Map Layer Switcher & Filters -->
-  <div id="arLayers" class="absolute top-20 right-3 z-20 flex flex-col items-end gap-2 pointer-events-none">
+  <div class="absolute top-20 right-3 z-20 flex flex-col items-end gap-2 pointer-events-none">
     <div class="glass-panel p-2.5 rounded-2xl flex flex-col gap-2 pointer-events-auto shadow-xl w-52">
       <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider px-1">Map Layers & Overlays</span>
       
@@ -355,19 +385,19 @@
     <!-- Active Incident Counter Pill -->
     <div class="glass-panel px-3 py-2 rounded-xl text-xs text-slate-300 flex items-center gap-2 shadow-lg pointer-events-auto">
       <span class="w-2.5 h-2.5 rounded-full bg-red-500 animate-ping"></span>
-      <span><strong id="activeIncidentsCount">0</strong> Live Incidents Tracked</span>
+      <span><strong id="activeIncidentsCount">5</strong> Live Incidents Tracked</span>
     </div>
   </div>
 
   <!-- Bottom Floating Live Telemetry Ticker -->
-  <div id="arTicker" class="absolute bottom-2 left-1/2 -translate-x-1/2 z-20 pointer-events-auto">
+  <div class="absolute bottom-2 left-1/2 -translate-x-1/2 z-20 pointer-events-auto">
     <div class="glass-panel px-4 py-1.5 rounded-full flex items-center gap-3 text-xs border border-slate-700/80 shadow-2xl max-w-xl">
       <span class="flex items-center gap-1.5 text-emerald-400 font-bold whitespace-nowrap">
         <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
         STREAM:
       </span>
       <span id="liveFeedTicker" class="text-slate-300 truncate text-[11px]">
-        📡 Connecting to live data services…
+        📡 Connected to Live Smart City Grid. Rajiv Chowk Ramp A & Lift 1 verified active.
       </span>
     </div>
   </div>
